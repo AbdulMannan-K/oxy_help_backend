@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 import { v4 as uuidv4 } from "uuid";
+import * as fs from "fs";
 
 const DIR = './public/';
 
@@ -17,7 +18,7 @@ app.use(bodyParser.urlencoded({
 app.use(cors());
 app.use('/public', express.static('public'));
 
-app.listen(port, () => {
+app.listen(port,'0.0.0.0', () => {
     console.log('Connected to port ' + port)
 })
 const storage = multer.diskStorage({
@@ -43,24 +44,34 @@ let upload = multer({
     }
 });
 
+app.delete('/:imagename',function (req, res) {
+    let message = "Error! in image upload.";
+    if (!req.params.imagename) {
+        console.log("No file received");
+        message = "Error! in image delete.";
+        return res.status(500).json('error in delete');
+
+    } else {
+        console.log('file received');
+        console.log(req.params.imagename);
+        try {
+            fs.unlinkSync(DIR+'/'+req.params.imagename);
+            console.log('successfully deleted /tmp/hello');
+            return res.status(200).send('Successfully! Image has been Deleted');
+        } catch (err) {
+            // handle the error
+            return res.status(400).send(err);
+        }
+
+    }
+
+});
+
+
 app.post('/', upload.single('image'), async (req, res, next) => {
     const url = req.protocol + '://' + req.get('host')
     let client = (req.body.client);
     console.log(client);
     console.log(url + '/public/' + req.file.filename)
     res.send(url + '/public/' + req.file.filename);
-    // user.save().then(result => {
-    //     res.status(201).json({
-    //         message: "Image uploaded successfully!",
-    //         userCreated: {
-    //             _id: result._id,
-    //             image: result.image
-    //         }
-    //     })
-    // }).catch(err => {
-    //     console.log(err),
-    //         res.status(500).json({
-    //             error: err
-    //         });
-    // })
 })
