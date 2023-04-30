@@ -2,12 +2,18 @@ import multer from "multer";
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
+import https from 'https'
 import { v4 as uuidv4 } from "uuid";
 import * as fs from "fs";
+
+let privateKey  = fs.readFileSync('sslcert/key.pkey', 'utf8');
+let certificate = fs.readFileSync('sslcert/cert.cer', 'utf8');
+let credentials = {key: privateKey, cert: certificate};
 
 const DIR = './public/';
 
 const app = express();
+let httpsServer = https.createServer(credentials, app);
 
 const port = process.env.PORT || 4000;
 
@@ -18,7 +24,7 @@ app.use(bodyParser.urlencoded({
 app.use(cors());
 app.use('/public', express.static('public'));
 
-app.listen(port,'0.0.0.0', () => {
+httpsServer.listen(port,'0.0.0.0', () => {
     console.log('Connected to port ' + port)
 })
 const storage = multer.diskStorage({
