@@ -5,6 +5,13 @@ import bodyParser from "body-parser";
 import https from 'https'
 import { v4 as uuidv4 } from "uuid";
 import * as fs from "fs";
+import admin from "firebase-admin";
+import serviceAccount from "./pk.json" assert { type: "json" };
+import {getAuth} from "firebase-admin/auth";
+
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+});
 
 let privateKey  = fs.readFileSync('sslcert/key.pkey', 'utf8');
 let certificate = fs.readFileSync('sslcert/cert.cer', 'utf8');
@@ -80,4 +87,9 @@ app.post('/', upload.single('image'), async (req, res, next) => {
     console.log(client);
     console.log(url + '/public/' + req.file.filename)
     res.send(url + '/public/' + req.file.filename);
+})
+
+app.delete('/deleteUser/:uid',async function (req, res) {
+    const uid = req.params.uid;
+    await getAuth().deleteUser(uid).then().catch(err => console.log(err))
 })
