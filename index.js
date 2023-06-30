@@ -8,6 +8,11 @@ import * as fs from "fs";
 import admin from "firebase-admin";
 import serviceAccount from "./pk.json" assert { type: "json" };
 import {getAuth} from "firebase-admin/auth";
+import capsuleRoutes from "./routes/capsuleRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
+import treatmentRoutes from "./routes/treatmentRoutes.js";
+import employeeRoutes from "./routes/employeeRoutes.js";
+import mongoose from "mongoose";
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
@@ -30,6 +35,20 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(cors());
 app.use('/public', express.static('public'));
+app.use('/capsules', capsuleRoutes);
+app.use('/users', userRoutes);
+app.use('/treatments', treatmentRoutes);
+app.use('/employees', employeeRoutes);
+
+
+mongoose.connect('mongodb://127.0.0.1:27017/capsuleDB', { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => {
+        console.log('Connected to mongoDB')
+    })
+    .catch((err) => {
+        console.log('Failed to connect to mongoDB', err)
+    })
+
 
 httpsServer.listen(port,'0.0.0.0', () => {
     console.log('Connected to port ' + port)
