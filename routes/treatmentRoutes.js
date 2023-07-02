@@ -1,11 +1,11 @@
 import express from "express";
-import treatment from "../models/treatment.js";
+import Treatment from "../models/treatment.js";
 
 const treatmentRoutes = express.Router();
 
 treatmentRoutes.get("/", (req, res) => {
 
-        treatment.find({}).then((treatments) => {
+        Treatment.find({}).then((treatments) => {
             res.status(200).json(treatments);
         }
         ).catch((err) => {
@@ -19,7 +19,7 @@ treatmentRoutes.get("/", (req, res) => {
 
 treatmentRoutes.delete("/:id", (req, res) => {
 
-            treatment.findByIdAndDelete(req.params.id).then((treatment) => {
+            Treatment.findByIdAndDelete(req.params.id).then((treatment) => {
                 res.status(200).json(treatment);
             }
             ).catch((err) => {
@@ -48,7 +48,7 @@ treatmentRoutes.post("/", (req, res) => {
 );
 
 treatmentRoutes.put("/:id", (req, res) => {
-    treatment.findByIdAndUpdate(req.params.id, {
+    Treatment.findByIdAndUpdate(req.params.id, {
         total: req.body.total,
         completed: req.body.completed,
         events: req.body.events,
@@ -64,7 +64,7 @@ treatmentRoutes.put("/:id", (req, res) => {
 }
 );
 treatmentRoutes.get("/:id", (req, res) => {
-    treatment.findById(req.params.id).then((treatment) => {
+    Treatment.findById(req.params.id).then((treatment) => {
         res.status(200).json(treatment);
     }
     ).catch((err) => {

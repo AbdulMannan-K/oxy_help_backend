@@ -6,42 +6,7 @@ const capsuleRoutes = express.Router();
 
 capsuleRoutes.get("/", async (req, res) => {
 
-    try {
-        const events = await Capsule.find().exec();
-
-        // Fetch all treatments from the database
-        const treatments = await Treatment.find().exec();
-
-        // Map events and attach treatment data
-        const updatedEvents = events.map((event) => {
-            const eventId = event._id;
-            const eventData = event.toObject();
-            const treatmentData = treatments.find(
-                (treatment) => treatment._id.toString() === eventData.treatmentId.toString()
-            );
-
-            if (treatmentData) {
-                return {
-                    event_id: eventId,
-                    completed: treatmentData.completed,
-                    total: treatmentData.total,
-                    ...eventData,
-                };
-            } else {
-                return {
-                    event_id: eventId,
-                    completed: 0,
-                    total: 0,
-                    ...eventData,
-                };
-            }
-
-        });
-        res.status(200).json(events);
-    } catch (err) {
-        res.status(400).json(err);
-
-    }
+    Capsule.find({}).then(data=>res.status(200).json(data)).catch(err=>res.status(400).json(err))
 
     }
 );
@@ -76,12 +41,13 @@ capsuleRoutes.post("/", async (req, res) => {
         freeOfCost: req.body.freeOfCost,
         treatment: req.body.treatment,
         end: req.body.end,
+        clientId: req.body.clientId,
         deletable: req.body.deletable,
         clientName: req.body.clientName,
+        treatmentId: req.body.treatmentId,
         comment: req.body.comment,
         treatmentNumber: req.body.treatmentNumber,
         payment: req.body.payment,
-        treatmentId: req.body.treatmentId,
     });
     try {
         const data = await capsule.save();
@@ -106,8 +72,14 @@ capsuleRoutes.delete("/:id", async (req, res) => {
 }
 );
 
-capsuleRoutes.put("/:id", async (req, res) => {
 
+capsuleRoutes.get("/:id",(req,res)=>{
+    Capsule.findById(req.params.id).then(data=>res.status(200).json(data)).catch(err=>res.status(400).json(err))
+})
+
+capsuleRoutes.put("/:id", async (req, res) => {
+    console.log(req.params.id)
+    console.log(req.body)
     try {
         const data = await Capsule.findByIdAndUpdate(req.params.id, {
             title: req.body.title,
@@ -123,6 +95,7 @@ capsuleRoutes.put("/:id", async (req, res) => {
             end: req.body.end,
             deletable: req.body.deletable,
             clientName: req.body.clientName,
+            clientId: req.body.clientId,
             comment: req.body.comment,
             treatmentNumber: req.body.treatmentNumber,
             payment: req.body.payment,
@@ -130,6 +103,7 @@ capsuleRoutes.put("/:id", async (req, res) => {
         });
         res.status(200).json(data);
     } catch (err) {
+        console.log(err)
         res.status(400).json(err);
 
     }
@@ -151,5 +125,6 @@ capsuleRoutes.get("/dateRange", async (req, res) => {
     }
 }
 );
+
 
 export default capsuleRoutes;

@@ -35,6 +35,7 @@ userRoutes.post("/", async (req, res) => {
             firstName: req.body.firstName,
             lastName: req.body.lastName,
             gender: req.body.gender,
+            phoneNumber: req.body.phoneNumber,
             birthDay: req.body.birthDay,
             city: req.body.city,
             country: req.body.country,
@@ -53,15 +54,16 @@ userRoutes.post("/", async (req, res) => {
 );
 
 userRoutes.put("/:id", async (req, res) => {
+    console.log(req.params.id,req.body)
     try {
-        User.findByIdAndUpdate(req.params.id, req.body, {new: true}, (err, model) => {
-            if (!err) {
-                res.status(200).json(model);
-            } else {
+        User.findByIdAndUpdate(req.params.id, req.body, {new: true}).then((model) =>
+        {
+            res.status(200).json(model);
+        }).catch(
+            err=> {
                 res.status(400).json(err);
             }
-
-        });
+        )
         }
     catch (err) {
         res.status(400).json(err);
@@ -80,5 +82,14 @@ userRoutes.delete("/:id", async (req, res) => {
 
 );
 
+userRoutes.get("/:id", async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        res.status(200).json(user);
+    } catch (err) {
+        res.status(400).json(err);
+    }
+}
+);
 
 export default userRoutes;

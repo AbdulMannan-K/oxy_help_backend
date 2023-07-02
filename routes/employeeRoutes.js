@@ -1,5 +1,6 @@
 import express from "express";
 import Employee from "../models/employee.js";
+import employee from "../models/employee.js";
 
 const employeeRoutes = express.Router();
 
@@ -18,7 +19,7 @@ employeeRoutes.get("/", (req, res) => {
 
 employeeRoutes.delete("/:id", (req, res) => {
 
-        Employee.findByIdAndDelete(req.params.id).then((employee) => {
+        Employee.findOneAndDelete({email: req.params.id}).then((employee) => {
             res.status(200).json(employee);
         }
         ).catch((err) => {
@@ -65,5 +66,11 @@ employeeRoutes.put("/:id", (req, res) => {
     );
 }
 );
+
+employeeRoutes.get("/:email",(req,res)=>{
+    Employee.find({email:req.params.email}).then((data)=>{
+        res.status(200).json(data)
+    }).catch(err=>res.status(400).json(err))
+})
 
 export default employeeRoutes;
