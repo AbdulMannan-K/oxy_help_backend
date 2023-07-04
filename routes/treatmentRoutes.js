@@ -19,7 +19,7 @@ treatmentRoutes.get("/", (req, res) => {
 
 treatmentRoutes.delete("/:id", (req, res) => {
 
-            Treatment.findByIdAndDelete(req.params.id).then((treatment) => {
+            Treatment.findOneAndDelete({treatment_id:req.params.id}).then((treatment) => {
                 res.status(200).json(treatment);
             }
             ).catch((err) => {
@@ -31,6 +31,7 @@ treatmentRoutes.delete("/:id", (req, res) => {
 });
 treatmentRoutes.post("/", (req, res) => {
     const treatment = new Treatment({
+        treatment_id: req.body.treatmentId,
         total: req.body.total,
         completed: req.body.completed,
         events: req.body.events,
@@ -48,7 +49,7 @@ treatmentRoutes.post("/", (req, res) => {
 );
 
 treatmentRoutes.put("/:id", (req, res) => {
-    Treatment.findByIdAndUpdate(req.params.id, {
+    Treatment.findOneAndUpdate({treatment_id:req.params.id}, {
         total: req.body.total,
         completed: req.body.completed,
         events: req.body.events,
@@ -64,7 +65,7 @@ treatmentRoutes.put("/:id", (req, res) => {
 }
 );
 treatmentRoutes.get("/:id", (req, res) => {
-    Treatment.findById(req.params.id).then((treatment) => {
+    Treatment.findOne({treatment_id:req.params.id}).then((treatment) => {
         res.status(200).json(treatment);
     }
     ).catch((err) => {

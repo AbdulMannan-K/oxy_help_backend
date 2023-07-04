@@ -27,7 +27,6 @@ userRoutes.get("/", async (req, res) => {
 // beforeQues: {type: Array, required: true},
 // history: {type: Array, required: true},
 userRoutes.post("/", async (req, res) => {
-    console.log(req.body)
     try {
         const user = new User({
             serialNumber: req.body.serialNumber,
@@ -54,7 +53,6 @@ userRoutes.post("/", async (req, res) => {
 );
 
 userRoutes.put("/:id", async (req, res) => {
-    console.log(req.params.id,req.body)
     try {
         User.findByIdAndUpdate(req.params.id, req.body, {new: true}).then((model) =>
         {

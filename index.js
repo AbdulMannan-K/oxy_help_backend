@@ -25,7 +25,7 @@ let credentials = {key: privateKey, cert: certificate};
 const DIR = './public/';
 
 const app = express();
-// let httpsServer = https.createServer(credentials, app);
+let httpsServer = https.createServer(credentials, app);
 
 const port = process.env.PORT || 4000;
 
@@ -50,13 +50,13 @@ mongoose.connect('mongodb://127.0.0.1:27017/capsuleDB', { useNewUrlParser: true,
     })
 
 
-// httpsServer.listen(port,'0.0.0.0', () => {
-//     console.log('Connected to port ' + port)
-// })
-
-app.listen(port,()=>{
-    console.log('connected to port '+port)
+httpsServer.listen(port,'0.0.0.0', () => {
+    console.log('Connected to port ' + port)
 })
+
+// app.listen(port,()=>{
+//     console.log('connected to port '+port)
+// })
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {

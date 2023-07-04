@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
 const capsuleSchema = new mongoose.Schema({
+    event_id: {type: String, required: true},
     title: {type: String, required: true},
     color: {type: String, required: true},
     start: {type: Date, required: true},
